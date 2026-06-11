@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paula Cakes 🎂 - Painel Administrativo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #f5f6fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .card-admin {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            border-top: 6px solid #e91e63;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+
+        input {
+            padding: 0.7rem;
+            border: 1px solid #dcdde1;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            width: 100%;
+        }
+
+        input:focus {
+            border-color: #e91e63;
+        }
+
+        button {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #c2185b;
+        }
+
+        .escondido {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="secao-login" class="card-admin">
+        <h2>Acesso Restrito 🔐</h2>
+        <form id="form-login">
+            <div class="campo-grupo">
+                <label for="login-email">E-mail Administrativo:</label>
+                <input type="email" id="login-email" placeholder="seu-email@email.com" required>
+            </div>
+            <div class="campo-grupo">
+                <label for="login-senha">Senha:</label>
+                <input type="password" id="login-senha" placeholder="******" required>
+            </div>
+            <button type="submit" id="btn-entrar">Entrar no Painel</button>
+        </form>
+    </div>
+
+    <div id="secao-cadastro" class="card-admin escondido">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; background: #f8f9fa; padding: 10px 15px; border-radius: 8px; border-left: 4px solid #e91e63;">
+            <h4 style="margin: 0; color: #333;">Painel Paula Cakes 🍰</h4>
+            <button id="btn-logout" style="background: #7f8c8d; color: white; padding: 6px 12px; font-size: 0.85rem; width: auto;">Sair</button>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 2rem;">
+            <button id="btn-aba-cadastro" onclick="mudarAba('cadastro')" style="flex: 1; background: #2e7d32; font-size: 0.9rem; padding: 12px 5px;">
+                ➕ Cadastrar Bolo
+            </button>
+            <button id="btn-aba-gerenciar" onclick="mudarAba('gerenciar')" style="flex: 1; background: #7b1fa2; font-size: 0.9rem; padding: 12px 5px;">
+                ⚙️ Gerenciar Vitrine
+            </button>
+        </div>
+
+        <div id="conteudo-cadastro">
+            <h3 id="titulo-formulario" style="color: #2e7d32; margin-bottom: 1.2rem; border-bottom: 2px solid #2e7d32; padding-bottom: 5px; font-size: 1.2rem;">Cadastrar Novo Bolo</h3>
+            
+            <form id="form-bolo">
+                <div class="campo-grupo">
+                    <label>Nome do Bolo:</label>
+                    <input type="text" id="nome" required>
+                </div>
+                <div class="campo-grupo">
+                    <label>Sabor / Descrição:</label>
+                    <input type="text" id="sabor" required>
+                </div>
+                <div class="campo-grupo">
+                    <label>Preço (R$):</label>
+                    <input type="number" id="preco" step="0.01" required>
+                </div>
+
+                <div style="background: #fafafa; border: 1px dashed #bbb; padding: 12px; border-radius: 6px; margin-bottom: 1.5rem;">
+                    <h5 style="margin-bottom: 10px; color: #555;">Fotos do Bolo</h5>
+                    <div style="margin-bottom: 8px;">
+                        <label style="font-size: 0.8rem;">Foto Principal (Obrigatória):</label>
+                        <input type="file" id="foto1" accept="image/*" style="border:none; padding:5px 0;">
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label style="font-size: 0.8rem;">Foto Lateral 2 (Opcional):</label>
+                        <input type="file" id="foto2" accept="image/*" style="border:none; padding:5px 0;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem;">Foto Lateral 3 (Opcional):</label>
+                        <input type="file" id="foto3" accept="image/*" style="border:none; padding:5px 0;">
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-cadastrar" style="background: #2e7d32;">
+                    Salvar na Vitrine Pública
+                </button>
+            </form>
+        </div>
+
+        <div id="conteudo-gerenciar" style="display: none;">
+            <h3 style="color: #7b1fa2; margin-bottom: 1.2rem; border-bottom: 2px solid #7b1fa2; padding-bottom: 5px; font-size: 1.2rem;">Gerenciar Vitrine Existente</h3>
+            <div id="lista-gerenciamento-bolos" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                </div>
+        </div>
+
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO DO BANCO
+        const SUPABASE_URL = "https://kryjeuetrduyelgrhmvp.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_OOcO_VELf8Hb7isW-DDTyA_O9KhJVmi";
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const secaoLogin = document.getElementById('secao-login');
+        const secaoCadastro = document.getElementById('secao-cadastro');
+
+        // VARIÁVEL GLOBAL PARA CONTROLE DE EDIÇÃO
+        let idBoloSendoEditado = null;
+
+        // 1️⃣ LÓGICA DE LOGIN RESTRITO
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+            const btn = document.getElementById('btn-entrar');
+
+            try {
+                btn.innerText = "Autenticando...";
+
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: senha,
+                });
+
+                if (error) throw error;
+
+                // Esconde login e exibe painel administrativo
+                secaoLogin.classList.add('escondido');
+                secaoCadastro.classList.remove('escondido');
+                
+                // Força abrir a aba de cadastro inicialmente com visual limpo
+                mudarAba('cadastro');
+
+            } catch (error) {
+                alert("Falha na autenticação: " + error.message);
+            } finally {
+                btn.innerText = "Entrar no Painel";
+            }
+        });
+
+        // 🔄 ALTERNÂNCIA INTELIGENTE DE ABAS
+        function mudarAba(aba) {
+            const cardCadastro = document.getElementById('conteudo-cadastro');
+            const cardGerenciar = document.getElementById('conteudo-gerenciar');
+            const btnCadastro = document.getElementById('btn-aba-cadastro');
+            const btnGerenciar = document.getElementById('btn-aba-gerenciar');
+
+            if (aba === 'cadastro') {
+                cardCadastro.style.display = 'block';
+                cardGerenciar.style.display = 'none';
+                
+                btnCadastro.style.opacity = '1';
+                btnCadastro.style.transform = 'scale(1.03)';
+                btnGerenciar.style.opacity = '0.5';
+                btnGerenciar.style.transform = 'scale(1)';
+            } else {
+                cardCadastro.style.display = 'none';
+                cardGerenciar.style.display = 'block';
+                
+                btnGerenciar.style.opacity = '1';
+                btnGerenciar.style.transform = 'scale(1.03)';
+                btnCadastro.style.opacity = '0.5';
+                btnCadastro.style.transform = 'scale(1)';
+                
+                // Atualiza a listagem automaticamente ao alternar
+                carregarListaGerenciamento();
+            }
+        }
+
+        // 🔄 FUNÇÃO AUXILIAR DE UPLOAD
+        async function fazerUploadFoto(inputElement) {
+            if (!inputElement || !inputElement.files || inputElement.files.length === 0) {
+                return null;
+            }
+
+            const arquivo = inputElement.files[0];
+            const nomeArquivo = `${Date.now()}-${arquivo.name}`;
+
+            const { data, error } = await supabaseClient
+                .storage
+                .from('fotos-bolos')
+                .upload(nomeArquivo, arquivo);
+
+            if (error) {
+                console.error("Erro no upload do arquivo:", error.message);
+                throw new Error(`Falha ao carregar a imagem: ${error.message}`);
+            }
+
+            const { data: publicUrlData } = supabaseClient
+                .storage
+                .from('fotos-bolos')
+                .getPublicUrl(nomeArquivo);
+
+            return publicUrlData.publicUrl;
+        }
+
+        // 2️⃣ LOGIC DE CADASTRO / EDIÇÃO DE BOLO
+        document.getElementById('form-bolo').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-cadastrar');
+            const nome = document.getElementById('nome').value;
+            const sabor = document.getElementById('sabor').value;
+            const preco = parseFloat(document.getElementById('preco').value);
+
+            const inputFoto1 = document.getElementById('foto1');
+            const inputFoto2 = document.getElementById('foto2');
+            const inputFoto3 = document.getElementById('foto3');
+
+            try {
+                btn.disabled = true;
+
+                btn.innerText = "Verificando uploads de fotos...";
+                const urlFoto1 = await fazerUploadFoto(inputFoto1);
+                const urlFoto2 = await fazerUploadFoto(inputFoto2);
+                const urlFoto3 = await fazerUploadFoto(inputFoto3);
+
+                const dadosBolo = {
+                    nome: nome,
+                    sabor: sabor,
+                    preco: preco
+                };
+
+                if (urlFoto1) dadosBolo.imagem_url = urlFoto1;
+                if (urlFoto2) dadosBolo.imagem_url_2 = urlFoto2;
+                if (urlFoto3) dadosBolo.imagem_url_3 = urlFoto3;
+
+                if (idBoloSendoEditado) {
+                    btn.innerText = "Atualizando no Banco...";
+                    
+                    const { error } = await supabaseClient
+                        .from('Bolo')
+                        .update(dadosBolo)
+                        .eq('id', idBoloSendoEditado);
+
+                    if (error) throw error;
+
+                    alert("Bolo atualizado com sucesso! 📝✨");
+                    cancelarEdicao();
+                } else {
+                    btn.innerText = "Salvando no Banco...";
+                    dadosBolo.id = Math.floor(Math.random() * 1000000);
+
+                    const { error } = await supabaseClient
+                        .from('Bolo')
+                        .insert([dadosBolo]);
+
+                    if (error) throw error;
+
+                    alert("Bolo cadastrado com sucesso com as imagens! 🎂✨");
+                }
+
+                document.getElementById('form-bolo').reset();
+                carregarListaGerenciamento();
+
+            } catch (err) {
+                console.error(err);
+                alert(`Erro ao salvar: ${err.message}`);
+            } finally {
+                btn.innerText = idBoloSendoEditado ? "Salvar Alterações" : "Salvar na Vitrine Pública";
+                btn.disabled = false;
+            }
+        });
+
+        // 3️⃣ LOGOUT DO PAINEL
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            secaoCadastro.classList.add('escondido');
+            secaoLogin.classList.remove('escondido');
+            document.getElementById('form-login').reset();
+        });
+
+        // 4️⃣ FUNÇÃO PARA CARREGAR A LISTA DE GERENCIAMENTO
+        async function carregarListaGerenciamento() {
+            const container = document.getElementById('lista-gerenciamento-bolos');
+            if (!container) return;
+
+            container.innerHTML = '<p style="text-align:center; color:#666; padding: 20px;">Carregando...</p>';
+
+            const { data: bolos, error } = await supabaseClient
+                .from('Bolo')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) {
+                console.error('Erro ao buscar bolos:', error);
+                container.innerHTML = '<p style="color:red; text-align:center;">Erro ao carregar lista.</p>';
+                return;
+            }
+
+            if (bolos.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#777; padding:20px;">Nenhum bolo na vitrine.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            bolos.forEach(bolo => {
+                const card = document.createElement('div');
+                card.style = "background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);";
+
+                const boloString = JSON.stringify(bolo).replace(/"/g, '&quot;');
+
+                card.innerHTML = `
+                    ${bolo.imagem_url ? `<img src="${bolo.imagem_url}" style="width:60px; height:60px; object-fit:contain; background-color:#fafafa; border-radius:4px;">` : '<div style="width:60px; height:60px; background:#eee; border-radius:4px;"></div>'}
+                    <div style="flex: 1; min-width: 0;">
+                        <h4 style="margin: 0; color: #333; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${bolo.nome}</h4>
+                        <p style="margin: 2px 0; color: #2e7d32; font-weight: bold; font-size: 0.9rem;">R$ ${Number(bolo.preco).toFixed(2)}</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <button onclick="prepararEdicao(${boloString})" style="background: #2196F3; font-size: 0.75rem; padding: 5px 10px; width: auto; font-weight: normal;">Editar</button>
+                        <button onclick="deletarBolo(${bolo.id}, '${bolo.imagem_url || ''}', '${bolo.imagem_url_2 || ''}', '${bolo.imagem_url_3 || ''}')" style="background: #f44336; font-size: 0.75rem; padding: 5px 10px; width: auto; font-weight: normal;">Excluir</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 5️⃣ FUNÇÃO PARA DELETAR O BOLO
+        async function deletarBolo(id, url1, url2, url3) {
+            if (!confirm("Remover este bolo da vitrine?")) return;
+
+            try {
+                const arquivosParaDeletar = [];
+                [url1, url2, url3].forEach(url => {
+                    if (url) {
+                        const partesUrl = url.split('/');
+                        const nomeArquivo = partesUrl[partesUrl.length - 1];
+                        if (nomeArquivo) arquivosParaDeletar.push(nomeArquivo);
+                    }
+                });
+
+                if (arquivosParaDeletar.length > 0) {
+                    await supabaseClient.storage.from('fotos-bolos').remove(arquivosParaDeletar);
+                }
+
+                const { error } = await supabaseClient.from('Bolo').delete().eq('id', id);
+                if (error) throw error;
+
+                alert("Bolo removido! 🗑️");
+                if (idBoloSendoEditado === id) cancelarEdicao();
+                carregarListaGerenciamento();
+
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao excluir: " + error.message);
+            }
+        }
+
+        // 6️⃣ FUNÇÕES DE EDIÇÃO (COM CHANGER DE ABA AUTOMÁTICO)
+        function prepararEdicao(bolo) {
+            idBoloSendoEditado = bolo.id;
+
+            // Transfere os dados e muda para a aba do formulário!
+            mudarAba('cadastro');
+
+            document.getElementById('nome').value = bolo.nome;
+            document.getElementById('sabor').value = bolo.sabor;
+            document.getElementById('preco').value = bolo.preco;
+
+            document.getElementById('titulo-formulario').innerText = "📝 Editando: " + bolo.nome;
+            document.getElementById('titulo-formulario').style.color = "#2196F3";
+            
+            const btn = document.getElementById('btn-cadastrar');
+            btn.innerText = "Salvar Alterações";
+            btn.style.background = "#2196F3";
+
+            if (!document.getElementById('btn-cancelar-edicao')) {
+                const btnCancelar = document.createElement('button');
+                btnCancelar.id = 'btn-cancelar-edicao';
+                btnCancelar.type = 'button';
+                btnCancelar.innerText = "Cancelar e Voltar";
+                btnCancelar.style = "width: 100%; background: #9e9e9e; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 0.5rem; font-size: 0.9rem;";
+                btnCancelar.onclick = cancelarEdicao;
+                btn.parentNode.appendChild(btnCancelar);
+            }
+        }
+
+        function cancelarEdicao() {
+            idBoloSendoEditado = null;
+            document.getElementById('form-bolo').reset();
+
+            document.getElementById('titulo-formulario').innerText = "Cadastrar Novo Bolo";
+            document.getElementById('titulo-formulario').style.color = "#2e7d32";
+            
+            const btn = document.getElementById('btn-cadastrar');
+            btn.innerText = "Salvar na Vitrine Pública";
+            btn.style.background = "#2e7d32";
+
+            const btnCancelar = document.getElementById('btn-cancelar-edicao');
+            if (btnCancelar) btnCancelar.remove();
+            
+            mudarAba('gerenciar');
+        }
+    </script>
+</body>
+
+</html>

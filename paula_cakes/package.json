@@ -1,0 +1,26 @@
+{
+  "name": "paula_cakes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  
+  "dependencies": {
+    "@prisma/client": "^7.8.0",
+    "@supabase/supabase-js": "^2.107.0",
+    "axios": "^1.17.0",
+    "fastify": "^5.8.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "dotenv": "^17.4.2",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  }
+}
