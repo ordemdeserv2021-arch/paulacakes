@@ -6,567 +6,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paula Cakes 🎂 - Vitrine Inteligente</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    <link rel="stylesheet" href="index.css">
 
-        body {
-            background-color: #f9f6f7;
-            color: #333;
-        }
 
-        header {
-            background-color: #e91e63;
-            color: white;
-            text-align: center;
-            padding: 2rem 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
 
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
 
-        header p {
-            color: #ffe0b2;
-            font-size: 1.1rem;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .vitrine {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        .card-bolo {
-            background: white;
-            border-left: 6px solid #e91e63;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
-
-        .card-bolo:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .topo-card {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            align-items: center;
-        }
-
-        .info-bolo {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .info-bolo h2 {
-            font-size: 1.4rem;
-            color: #2c3e50;
-            margin-bottom: 0.3rem;
-        }
-
-        .info-bolo p {
-            color: #7f8c8d;
-            font-size: 1rem;
-        }
-
-        .preco-bolo {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #2ecc71;
-            text-align: right;
-        }
-
-        .btn-whatsapp {
-            display: inline-flex;
-            align-items: center;
-            background-color: #25d366;
-            color: white;
-            text-decoration: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            transition: background-color 0.2s, transform 0.2s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-whatsapp:hover {
-            background-color: #128c7e;
-            transform: scale(1.03);
-        }
-
-        .loading {
-            text-align: center;
-            font-size: 1.2rem;
-            color: #e91e63;
-            margin-top: 3rem;
-            font-weight: bold;
-        }
-
-        /* ==========================================================================
-           🎨 ESTILOS DA JANELA POPUP / MODAL (ESTILO MERCADO LIVRE)
-           ========================================================================== */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-
-        .modal-conteudo {
-            background-color: white;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 750px;
-            padding: 2rem;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-            position: relative;
-            animation: abrirJanela 0.3s ease-out;
-        }
-
-        @keyframes abrirJanela {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .fechar-popup {
-            position: absolute;
-            top: 12px;
-            right: 20px;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #7f8c8d;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .fechar-popup:hover {
-            color: #c2185b;
-        }
-
-        .produto-container {
-            display: flex;
-            flex-direction: row;
-            gap: 2rem;
-            margin-top: 1rem;
-        }
-
-        /* Galeria da Esquerda */
-        .galeria-area {
-            display: flex;
-            gap: 1rem;
-            flex: 1.2;
-        }
-
-        .miniaturas-laterais {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .miniatura {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border: 2px solid #dcdde1;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        .miniatura:hover,
-        .miniatura.ativa {
-            border-color: #e91e63;
-        }
-
-        .foto-principal-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #f1f2f6;
-            border-radius: 8px;
-            background-color: #fafafa;
-            height: 300px;
-        }
-
-        .foto-principal-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        /* Detalhes da Direita */
-        .detalhes-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-        }
-
-        .detalhes-area h2 {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-
-        .detalhes-sabor {
-            font-size: 1.1rem;
-            color: #7f8c8d;
-            margin-bottom: 1rem;
-        }
-
-        .detalhes-preco {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #2ecc71;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Ajuste Responsivo para Celular */
-        @media (max-width: 600px) {
-            .produto-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .galeria-area {
-                flex-direction: column-reverse;
-            }
-
-            .miniaturas-laterais {
-                flex-direction: row;
-                justify-content: center;
-            }
-
-            .modal-conteudo {
-                padding: 1.5rem 1rem;
-            }
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding: 1rem;
-            font-size: 0.9rem;
-        }
-
-        footer a {
-            color: #7f8c8d;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
 </head>
 
 <body>
 
-    <header>
-        <h1>Paula Cakes 🎂</h1>
-        <p>Vitrine Digital Inteligente</p>
-    </header>
+    <!-- HERO: BRAND BANNER -->
 
-    <div class="container">
-        <div id="loading" class="loading">Carregando os deliciosos bolos direto do banco...</div>
-        <div id="vitrine" class="vitrine" style="display: none;"></div>
-    </div>
+    <body>
 
-    <div id="modal-produto" class="modal" onclick="fecharModalExterno(event)">
-        <div class="modal-conteudo">
-            <span class="fechar-popup" onclick="fecharModal()">&times;</span>
+        <!-- BANNER DO TOPO CENTRALIZADO PREMIUM -->
+        <div class="banner-paula-cakes">
+            <div class="banner-conteudo-alinhado">
 
-            <div class="produto-container">
-                <div class="galeria-area">
-                    <div id="wrapper-miniaturas" class="miniaturas-laterais">
-                    </div>
-                    <div class="foto-principal-container">
-                        <img id="foto-grande" src="" alt="Foto do bolo em destaque">
-                    </div>
+                <!-- LADO ESQUERDO -->
+                <span class="banner-texto-esquerdo">Cake Designer</span>
+
+                <!-- CENTRO: O Medalhão com o Logotipo -->
+                <div class="banner-logo-miolo">
+                    <img src="img/logo-topo.jpg" alt="Paula Cake - Cake Designer">
                 </div>
 
-                <div class="detalhes-area">
-                    <div>
-                        <h2 id="modal-nome-bolo">Nome do Bolo</h2>
-                        <p id="modal-sabor-bolo" class="detalhes-sabor">Sabor</p>
-                        <div id="modal-preco-bolo" class="detalhes-preco">R$ 0,00</div>
+                <!-- LADO DIREITO -->
+                <span class="banner-texto-direito">Paula Cakes</span>
+
+            </div>
+        </div>
+
+        <!-- Resto do seu código (Carrossel, Vitrine, etc.) -->
+        <!-- 🎪 SEÇÃO DO CARROSSEL DE FOTOS EM DESTAQUE -->
+        <div id="carrossel-area" class="carrossel-secao" style="display: none;">
+            <h3>Destaques Irresistíveis ✨</h3>
+            <div id="carrossel-janela" class="carrossel-container">
+                <!-- Slides injetados de forma inteligente via JS -->
+            </div>
+        </div>
+
+        <!-- CONTAINER DA VITRINE PRINCIPAL -->
+        <div class="container">
+            <div id="loading" class="loading">Carregando vitrine de delícias...</div>
+            <div id="vitrine" class="vitrine" style="display: none;"></div>
+        </div>
+
+        <!-- POPUP / MODAL MERCADO LIVRE -->
+        <div id="modal-produto" class="modal" onclick="fecharModalExterno(event)">
+            <div class="modal-conteudo">
+                <span class="fechar-popup" onclick="fecharModal()">&times;</span>
+
+                <div class="produto-container">
+                    <div class="galeria-area">
+                        <div id="wrapper-miniaturas" class="miniaturas-laterais"></div>
+                        <div class="foto-principal-container">
+                            <img id="foto-grande" src="" alt="Foto do bolo em destaque">
+                        </div>
                     </div>
 
-                    <a id="modal-btn-whatsapp" href="#" target="_blank" class="btn-whatsapp"
-                        style="text-align: center; justify-content: center;">
-                        Encomendar este Bolo no WhatsApp
-                    </a>
+                    <div class="detalhes-area">
+                        <div>
+                            <h2 id="modal-nome-bolo">Nome do Bolo</h2>
+                            <p id="modal-sabor-bolo" class="detalhes-sabor">Sabor</p>
+                            <div id="modal-preco-bolo" class="detalhes-preco">R$ 0,00</div>
+                        </div>
+
+                        <a id="modal-btn-whatsapp" href="#" target="_blank" class="btn-whatsapp"
+                            style="text-align: center; justify-content: center;">
+                            Encomendar este Bolo no WhatsApp
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <footer>
-        <a href="admin.html" target="_blank">🔐 Área Administrativa</a>
-    </footer>
+        <footer>
+            <a href="admin.html" target="_blank">🔐 Área Administrativa</a>
+        </footer>
 
-    <script>
-        // 🛠️ CONFIGURAÇÃO DO BANCO
-        const SUPABASE_URL = "https://kryjeuetrduyelgrhmvp.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_OOcO_VELf8Hb7isW-DDTyA_O9KhJVmi";
 
-        // Inicializa o cliente do Supabase
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        <script src="index.js" defer></script>
 
-        // Array global para guardar os dados carregados temporariamente na memória da página
-        let listaDeBolos = [];
 
-        async function carregarVitrineWeb() {
-            try {
-                const loadingDiv = document.getElementById('loading');
-                const vitrineDiv = document.getElementById('vitrine');
-
-                const { data: bolos, error } = await supabaseClient
-                    .from('Bolo')
-                    .select('*');
-
-                if (error) throw error;
-
-                vitrineDiv.innerHTML = "";
-                listaDeBolos = bolos || []; // Guarda os bolos na nossa variável global
-
-                if (listaDeBolos.length > 0) {
-                    listaDeBolos.forEach(bolo => {
-                        const card = `
-                            <div class="card-bolo" onclick="abrirModalDetalhes(${bolo.id})">
-                               ${bolo.imagem_url ? `<img src="${bolo.imagem_url}" alt="${bolo.nome}" style="width:100%; max-height:300px; object-fit:contain; background-color:#fafafa; border-radius:6px; margin-bottom:0.5rem;">` : ''}
-                                    <div class="info-bolo">
-                                        <h2>${bolo.nome}</h2>
-                                        <p>Sabor: ${bolo.sabor}</p>
-                                    </div>
-                                    <div class="preco-bolo">
-                                        R$ ${bolo.preco ? bolo.preco.toFixed(2) : "0.00"}
-                                    </div>
-                                </div>
-                                <a href="https://wa.me/5521964631442?text=Olá! Gostaria de encomendar o ${encodeURIComponent(bolo.nome)}" 
-                                   target="_blank" 
-                                   class="btn-whatsapp"
-                                   onclick="event.stopPropagation();">
-                                    Encomendar no WhatsApp
-                                </a>
-                            </div>
-                        `;
-                        vitrineDiv.innerHTML += card;
-                    });
-                } else {
-                    vitrineDiv.innerHTML = "<p style='text-align:center;'>Nenhum bolo cadastrado no momento.</p>";
-                }
-
-                loadingDiv.style.display = 'none';
-                vitrineDiv.style.display = 'grid';
-
-            } catch (error) {
-                console.error("Erro ao carregar dados:", error.message);
-                document.getElementById('loading').innerText = "Erro ao conectar com a nuvem: " + error.message;
-            }
-        }
-
-        // ==========================================================================
-        // 🎮 FUNÇÕES DO POPUP DE DETALHES (LOGICA DA GALERIA)
-        // ==========================================================================
-        function abrirModalDetalhes(idDoBolo) {
-            // Localiza o bolo correspondente dentro do nosso array global
-            const bolo = listaDeBolos.find(b => b.id === idDoBolo);
-            if (!bolo) return;
-
-            // Alimenta os dados textuais no popup
-            document.getElementById('modal-nome-bolo').innerText = bolo.nome;
-            document.getElementById('modal-sabor-bolo').innerText = `Sabor: ${bolo.sabor}`;
-            document.getElementById('modal-preco-bolo').innerText = `R$ ${bolo.preco ? bolo.preco.toFixed(2) : "0.00"}`;
-            document.getElementById('modal-btn-whatsapp').href = `https://wa.me/5521964631442?text=Olá! Gostaria de encomendar o ${encodeURIComponent(bolo.nome)}`;
-
-            // Define a foto principal inicial de destaque
-            const fotoGrande = document.getElementById('foto-grande');
-            fotoGrande.src = bolo.imagem_url || '';
-
-            // Monta as miniaturas laterais se elas existirem no banco
-            const containerMiniaturas = document.getElementById('wrapper-miniaturas');
-            containerMiniaturas.innerHTML = ""; // Limpa fotos de bolos anteriores
-
-            // Cria uma lista apenas com as fotos válidas preenchidas no banco
-            const fotosDisponiveis = [bolo.imagem_url, bolo.imagem_url_2, bolo.imagem_url_3].filter(url => url !== null && url !== '');
-
-            // Renderiza os quadradinhos se houver mais de uma imagem cadastrada
-            fotosDisponiveis.forEach((url, index) => {
-                const imgMini = document.createElement('img');
-                imgMini.src = url;
-                imgMini.className = `miniatura ${index === 0 ? 'ativa' : ''}`;
-                imgMini.alt = `Miniatura ${index + 1}`;
-
-                // Evento de passar o mouse ou clicar para mudar a foto principal
-                imgMini.onclick = function () {
-                    mudarFotoDestaque(url, imgMini);
-                };
-
-                containerMiniaturas.appendChild(imgMini);
-            });
-
-            // Exibe o popup na tela mudando o display
-            document.getElementById('modal-produto').style.display = 'flex';
-        }
-
-        function mudarFotoDestaque(linkDaMiniatura, elementoClicado) {
-            // Altera a foto grande central
-            document.getElementById('foto-grande').src = linkDaMiniatura;
-
-            // Remove a borda rosa ativa de todas as outras miniaturas
-            const minis = document.querySelectorAll('.miniatura');
-            minis.forEach(m => m.classList.remove('ativa'));
-
-            // Adiciona a borda rosa apenas na que está visualizando
-            elementoClicado.classList.add('ativa');
-        }
-
-        function fecharModal() {
-            document.getElementById('modal-produto').style.display = 'none';
-        }
-
-        // Permite fechar a janela se o cliente clicar no fundo escuro fora do card branco
-        function fecharModalExterno(event) {
-            if (event.target.id === 'modal-produto') {
-                fecharModal();
-            }
-        }
-
-        // FUNÇÃO PARA ALTERNAR ENTRE AS ABAS DO PAINEL
-function mudarAba(aba) {
-    const cardCadastro = document.getElementById('conteudo-cadastro');
-    const cardGerenciar = document.getElementById('conteudo-gerenciar');
-    const btnCadastro = document.getElementById('btn-aba-cadastro');
-    const btnGerenciar = document.getElementById('btn-aba-gerenciar');
-
-    if (aba === 'cadastro') {
-        // Mostra cadastro, esconde gerenciamento
-        cardCadastro.style.display = 'block';
-        cardGerenciar.style.display = 'none';
-        
-        // Destaca o botão ativo
-        btnCadastro.style.opacity = '1';
-        btnCadastro.style.transform = 'scale(1.02)';
-        btnGerenciar.style.opacity = '0.6';
-        btnGerenciar.style.transform = 'scale(1)';
-    } else {
-        // Mostra gerenciamento, esconde cadastro
-        cardCadastro.style.display = 'none';
-        cardGerenciar.style.display = 'block';
-        
-        // Destaca o botão ativo
-        btnGerenciar.style.opacity = '1';
-        btnGerenciar.style.transform = 'scale(1.02)';
-        btnCadastro.style.opacity = '0.6';
-        btnCadastro.style.transform = 'scale(1)';
-        
-        // Atualiza a lista sempre que abrir a aba de gerenciar
-        carregarListaGerenciamento();
-    }
-}
-
-// AJUSTE DA FUNÇÃO DE PREPARAR EDIÇÃO SELECIONADA ONTEM
-function prepararEdicao(bolo) {
-    idBoloSendoEditado = bolo.id;
-
-    // 1. Abre a aba do formulário automaticamente para o usuário ver o que está editando!
-    mudarAba('cadastro');
-
-    // 2. Transfere os valores do bolo de volta para os inputs
-    document.getElementById('nome').value = bolo.nome;
-    document.getElementById('sabor').value = bolo.sabor;
-    document.getElementById('preco').value = bolo.preco;
-
-    // 3. Modifica os títulos e botões para o modo de Edição
-    document.getElementById('titulo-formulario').innerText = "📝 Editando Bolo: " + bolo.nome;
-    
-    const btn = document.getElementById('btn-cadastrar');
-    btn.innerText = "Salvar Alterações";
-    btn.style.background = "#2196F3"; // Cor azul para destacar o modo edição
-
-    // Cria o botão Cancelar se ele não existir
-    if (!document.getElementById('btn-cancelar-edicao')) {
-        const btnCancelar = document.createElement('button');
-        btnCancelar.id = 'btn-cancelar-edicao';
-        btnCancelar.type = 'button';
-        btnCancelar.innerText = "Cancelar Alterações (Voltar)";
-        btnCancelar.style = "width: 100%; background: #9e9e9e; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 0.5rem; font-size: 1rem;";
-        btnCancelar.onclick = cancelarEdicao;
-        btn.parentNode.appendChild(btnCancelar);
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// AJUSTE NA FUNÇÃO DE CANCELAR EDIÇÃO
-function cancelarEdicao() {
-    idBoloSendoEditado = null;
-    document.getElementById('form-bolo').reset();
-
-    // Restaura o título e o botão para o modo Cadastro normal
-    document.getElementById('titulo-formulario').innerText = "Cadastrar Novo Bolo";
-    
-    const btn = document.getElementById('btn-cadastrar');
-    btn.innerText = "Salvar na Vitrine Pública";
-    btn.style.background = "#2e7d32"; 
-
-    const btnCancelar = document.getElementById('btn-cancelar-edicao');
-    if (btnCancelar) btnCancelar.remove();
-    
-    // Devolve o usuário para a aba de gerenciamento de onde ele veio
-    mudarAba('gerenciar');
-}
-
-        // Executa a carga inicial ao abrir a página
-        window.onload = carregarVitrineWeb;
-
-        
-        
-    </script>
-</body>
+    </body>
 
 </html>
