@@ -165,3 +165,15 @@ const SUPABASE_URL = "https://kryjeuetrduyelgrhmvp.supabase.co";
         }
 
         window.onload = carregarVitrineWeb;
+
+        const http = require('http');
+const port = 3000;
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end('<h1>Olá do servidor!</h1>');
+});
+
+server.listen(port, '0.0.0.0', () => {
+  console.log(`Servidor em http://localhost:${port}`);
+});
