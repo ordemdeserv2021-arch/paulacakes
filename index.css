@@ -6,9 +6,30 @@
 }
 
 body {
-    background-color: #f9f6f7;
-    color: #333;
+  background: linear-gradient(132deg, #eeb1b1,#00ff00, #a6e70e,#13eb30,#ecd4d4,#ffffff);
+  background-size: 400% 400%;
+  animation: BackgroundGradient 3s ease infinite;
 }
+
+h1 {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  font-family: Open Sans, sans-serif;
+  color: #fff;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 2em;
+  padding: 5px;
+}
+@keyframes BackgroundGradient {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
 
 /* BANNER DE ABERTURA - IDENTIDADE VISUAL PAULA CAKES */
 .hero-container {
@@ -136,13 +157,16 @@ body {
 /* 🍰 ENCAIXE PREMIUM: Preenche as laterais e centraliza o foco no miolo do bolo */
 .card-bolo img {
     width: 100% !important;
-    height: 320px !important;         /* Aumentamos de 280px para 320px para caber muito mais bolo na tela */
+    height: 330px !important;         /* Aumentamos de 280px para 320px para caber muito mais bolo na tela */
     object-fit: cover !important;     /* Cola a foto nas bordas eliminando o cinza */
-    object-position: center !important; /* Centraliza o foco na parte principal do confeito */
+    object-position: 75% 74% !important; /* Centraliza o foco na parte principal do confeito */
     background-color: transparent !important;
     border-radius: 6px 6px 0 0 !important;
     margin-bottom: 0.5rem !important;
     display: block !important;
+
+
+    
 }
 
 .topo-card {
@@ -467,4 +491,65 @@ footer a:hover {
     .banner-conteudo-alinhado {
         justify-content: center;
     }
+}
+
+/* 🌐 CONTAINER PARA EMPILHAR TEXTO E ÍCONE */
+.banner-bloco-link {
+    display: flex;
+    flex-direction: column; /* 🔥 Faz o ícone ir para baixo do texto */
+    align-items: center;    /* Centraliza o texto e o ícone um com o outro */
+    gap: 8px;              /* Espaçamento perfeito entre o texto e o ícone */
+}
+
+/* Remove os sublinhados padrões dos links do banner */
+.banner-bloco-link a {
+    text-decoration: none;
+}
+
+/* 🎨 ESTILIZAÇÃO DOS FAVICONS (ÍCONES DAS REDES) */
+.icone-rede-social img {
+    width: 28px !important;  /* Tamanho ideal e sutil para não brigar com o logo central */
+    height: 28px !important;
+    object-fit: contain !important;
+    transition: transform 0.2s ease;
+}
+
+/* Efeito sutil de zoom quando passar o mouse no ícone */
+.icone-rede-social img:hover {
+    transform: scale(1.15);
+}
+
+/* Ajuste rápido na responsividade para sumir com o bloco inteiro no celular */
+@media (max-width: 768px) {
+    .banner-bloco-link {
+        display: none;
+    }
+}
+
+/* 🎂 TRAVA DA FOTO DESTAQUE: impede que ela "exploda" a tela ao clicar */
+#foto-grande {
+    width: 100% !important;
+    max-width: 400px !important;  /* Define uma largura máxima ideal para o meio do modal */
+    height: 350px !important;      /* Mantém uma altura fixa elegante */
+    object-fit: contain !important; /* 🔥 O segredo: ajusta o bolo inteiro na tela sem cortar nem distorcer */
+    background-color: #f9f9f9 !important; /* Um fundo bem sutil caso a foto seja menor */
+    border-radius: 8px !important;
+    display: block !important;
+    margin: 0 auto !important;     /* Centraliza o bloco da foto */
+}
+
+/* Garante o alinhamento das miniaturas da esquerda */
+.miniatura {
+    width: 60px !important;
+    height: 60px !important;
+    object-fit: cover !important;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    border: 2px solid transparent;
+}
+
+/* Destaca a miniatura ativa */
+.miniatura.ativa {
+    border-color: #ff69b4 !important; /* Borda rosa para indicar qual foto está selecionada */
 }
