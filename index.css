@@ -553,3 +553,7 @@ footer a:hover {
 .miniatura.ativa {
     border-color: #ff69b4 !important; /* Borda rosa para indicar qual foto está selecionada */
 }
+
+a {
+   text-align: center;
+}
