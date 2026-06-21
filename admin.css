@@ -1,0 +1,98 @@
+
+        /* 🎨 ESTILIZAÇÃO PREMIUM PAINEL ADMINISTRATIVO */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .card-admin {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+            text-align: center;
+            border-bottom: 2px solid #e91e63;
+            padding-bottom: 10px;
+        }
+
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .campo-grupo label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .campo-grupo input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .campo-grupo input:focus {
+            border-color: #e91e63;
+            box-shadow: 0 0 5px rgba(233, 30, 99, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        #btn-entrar {
+            background: #e91e63;
+        }
+
+        #btn-entrar:hover {
+            background: #c2185b;
+        }
+
+        /* Classe crucial para a alternância de abas funcionar */
+        .escondido {
+            display: none !important;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: #777;
+            text-decoration: none;
+        }

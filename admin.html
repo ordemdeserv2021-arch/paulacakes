@@ -6,87 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paula Cakes 🎂 - Painel Administrativo</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        body {
-            background-color: #f5f6fa;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 1rem;
-        }
-
-        .card-admin {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-            border-top: 6px solid #e91e63;
-        }
-
-        h2 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .campo-grupo {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-            margin-bottom: 1.2rem;
-        }
-
-        label {
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #7f8c8d;
-        }
-
-        input {
-            padding: 0.7rem;
-            border: 1px solid #dcdde1;
-            border-radius: 6px;
-            font-size: 1rem;
-            outline: none;
-            width: 100%;
-        }
-
-        input:focus {
-            border-color: #e91e63;
-        }
-
-        button {
-            background-color: #e91e63;
-            color: white;
-            border: none;
-            padding: 0.8rem;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-
-        button:hover {
-            background-color: #c2185b;
-        }
-
-        .escondido {
-            display: none !important;
-        }
-    </style>
+    <link rel="stylesheet" href="admin.css">
 </head>
 
 <body>
@@ -162,7 +82,7 @@
         </div>
 
         <div id="conteudo-gerenciar" style="display: none;">
-            <h3 style="color: #7b1fa2; margin-bottom: 1.2rem; border-bottom: 2px solid #7b1fa2; padding-bottom: 5px; font-size: 1.2rem;">Gerenciar Vitrine Existente</h3>
+            <h3 style="color: #7b1fa2; margin-bottom: 1.2rem; border-bottom: 2px solid #7b1fa2; padding-bottom: 5px; font-size: 1.2rem;">Gerenciar Vitrine Existing</h3>
             <div id="lista-gerenciamento-bolos" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
                 </div>
         </div>
@@ -242,13 +162,19 @@
             }
         }
 
-        // 🔄 FUNÇÃO AUXILIAR DE UPLOAD
+        // 🔄 FUNÇÃO AUXILIAR DE UPLOAD COM VALIDAÇÃO DE ARQUIVO
         async function fazerUploadFoto(inputElement) {
             if (!inputElement || !inputElement.files || inputElement.files.length === 0) {
                 return null;
             }
 
             const arquivo = inputElement.files[0];
+
+            // 🔥 TRAVA DE SEGURANÇA: Garante que o tipo do arquivo seja estritamente uma imagem
+            if (!arquivo.type.startsWith('image/')) {
+                throw new Error(`O arquivo "${arquivo.name}" não é uma imagem válida! Por favor, selecione apenas fotos (PNG, JPG, JPEG, WEBP).`);
+            }
+
             const nomeArquivo = `${Date.now()}-${arquivo.name}`;
 
             const { data, error } = await supabaseClient
@@ -283,8 +209,9 @@
 
             try {
                 btn.disabled = true;
-
                 btn.innerText = "Verificando uploads de fotos...";
+
+                // Executa os uploads (a função modificada acima vai barrar se não for imagem)
                 const urlFoto1 = await fazerUploadFoto(inputFoto1);
                 const urlFoto2 = await fazerUploadFoto(inputFoto2);
                 const urlFoto3 = await fazerUploadFoto(inputFoto3);
@@ -329,7 +256,7 @@
 
             } catch (err) {
                 console.error(err);
-                alert(`Erro ao salvar: ${err.message}`);
+                alert(`${err.message}`); // Exibe o erro customizado da validação
             } finally {
                 btn.innerText = idBoloSendoEditado ? "Salvar Alterações" : "Salvar na Vitrine Pública";
                 btn.disabled = false;

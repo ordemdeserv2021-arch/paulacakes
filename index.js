@@ -8,8 +8,7 @@ let slidesCarrossel = [];
 let slideAtivoIndex = 0;
 let carrosselTimer = null;
 
-// 🔄 CARREGAMENTO COMPLETO DA VITRINE (ADMINISTRATIVO CORRIGIDO)
-// 🔄 CARREGAMENTO COMPLETO DA VITRINE WEB (PÚBLICO - CORRIGIDO)
+// 🔄 CARREGAMENTO COMPLETO DA VITRINE WEB (PÚBLICO)
 async function carregarVitrineWeb() {
     try {
         const loadingDiv = document.getElementById('loading');
@@ -31,11 +30,10 @@ async function carregarVitrineWeb() {
             const bolosComFoto = listaDeBolos.filter(b => b.imagem_url);
 
             // 1. O Carrossel do Topo pega os 5 bolos mais recentes com foto
-            slidesCarrossel = bolosComFoto.slice(0, 5);
+            slidesCarrossel = bolosComFoto;
             montarCarrosselDinamico();
 
-            // 🔥 CORREÇÃO: Mostra TODOS os bolos na vitrine de baixo sem ocultar os novos, 
-            // mas mantendo o layout público original
+            // Mostra TODOS os bolos na vitrine de baixo
             const bolosVitrine = listaDeBolos;
 
             if (bolosVitrine.length > 0) {
@@ -121,22 +119,77 @@ function proximoSlide() {
     slides[slideAtivoIndex].classList.add('ativo');
 }
 
-// 🎮 LÓGICA DOS DETALHES EM POPUP
+// 🎮 LÓGICA DOS DETALHES EM POPUP (ESTILO MERCADO LIVRE)
 function abrirModalDetalhes(idDoBolo) {
     const bolo = listaDeBolos.find(b => b.id === idDoBolo);
     if (!bolo) return;
 
     if (document.getElementById('modal-nome-bolo')) document.getElementById('modal-nome-bolo').innerText = bolo.nome;
     if (document.getElementById('modal-sabor-bolo')) document.getElementById('modal-sabor-bolo').innerText = `Sabor: ${bolo.sabor}`;
+    if (document.getElementById('modal-preco-bolo')) {
+        document.getElementById('modal-preco-bolo').innerText = `R$ ${Number(bolo.preco).toFixed(2)}`;
+    }
+
+    const btnWhats = document.getElementById('modal-btn-whatsapp');
+    if (btnWhats) {
+        btnWhats.href = `https://wa.me/5521964631442?text=Olá! Gostaria de saber o valor e encomendar o bolo: ${encodeURIComponent(bolo.nome)}`;
+    }
 
     const fotoGrande = document.getElementById('foto-grande');
     if (fotoGrande) fotoGrande.src = bolo.imagem_url || '';
 
-    document.getElementById('modal-produto').style.display = 'flex';
+    const wrapperMiniaturas = document.getElementById('wrapper-miniaturas');
+    if (wrapperMiniaturas) {
+        wrapperMiniaturas.innerHTML = "";
+
+        const fotosValidas = [bolo.imagem_url, bolo.imagem_url_2, bolo.imagem_url_3].filter(url => url);
+
+        if (fotosValidas.length > 0) {
+            fotosValidas.forEach(url => {
+                const miniatura = document.createElement('img');
+                miniatura.src = url;
+                miniatura.alt = "Miniatura do bolo";
+                miniatura.style.width = "50px";
+                miniatura.style.height = "50px";
+                miniatura.style.objectFit = "cover";
+                miniatura.style.cursor = "pointer";
+                miniatura.style.border = "2px solid #ddd";
+                miniatura.style.borderRadius = "4px";
+                miniatura.style.display = "block";
+                miniatura.style.marginBottom = "5px";
+
+                miniatura.onclick = function () {
+                    if (fotoGrande) fotoGrande.src = url;
+                };
+
+                wrapperMiniaturas.appendChild(miniatura);
+            });
+            wrapperMiniaturas.style.display = 'block';
+        } else {
+            wrapperMiniaturas.style.display = 'none';
+        }
+    }
+
+    const modalProduto = document.getElementById('modal-produto');
+    if (modalProduto) {
+        modalProduto.style.display = 'flex';
+    }
 }
 
+// ❌ FUNÇÃO PARA FECHAR O MODAL
 function fecharModal() {
-    document.getElementById('modal-produto').style.display = 'none';
+    const modalProduto = document.getElementById('modal-produto');
+    if (modalProduto) {
+        modalProduto.style.display = 'none';
+    }
 }
 
+// 🕶️ FECHAR SE O CLIENTE CLICAR FORA DA CAIXA BRANCA
+function fecharModalExterno(event) {
+    if (event.target.id === 'modal-produto') {
+        fecharModal();
+    }
+}
+
+// 🚀 DISPARAR CARREGAMENTO AO ABRIR A PÁGINA
 window.onload = carregarVitrineWeb;
